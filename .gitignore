@@ -1,0 +1,26 @@
+### --- .NET Core / C# --- ###
+bin/
+obj/
+*.exe
+*.dll
+*.pdb
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.sln.DotSettings.user
+
+### --- JetBrains (Rider/IntelliJ) --- ###
+.idea/
+*.iws
+*.iml
+*.ipr
+
+### --- Windows / OS Específicos --- ###
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+### --- Web (Se houver) --- ###
+node_modules/
+.env
