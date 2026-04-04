@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using VgcCollege.Library;
 using VgcCollege.MVC.Data;
+using VgcCollege.MVC.Models;
 
 namespace VgcCollege.MVC.Controllers.Admin
 {
@@ -51,9 +52,22 @@ namespace VgcCollege.MVC.Controllers.Admin
         }
 
         // GET: Student/Create
-        public IActionResult Create()
+        [HttpGet]
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var coursesFromDb = await _context.Courses.ToListAsync();
+
+            var viewModel = new StudentCreateViewModel
+            {
+                AvailableCourses = coursesFromDb.Select(c => new CourseEnrollSelectionViewModel
+                {
+                    CourseId = c.Id,
+                    CourseName = c.Name,
+                    IsSelected = false
+                }).ToList()
+            };
+
+            return View(viewModel);
         }
 
         // POST: Student/Create
@@ -61,22 +75,45 @@ namespace VgcCollege.MVC.Controllers.Admin
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Email,PhoneNumber,Address,DOB,Password")] StudentProfile studentProfile)
+        public async Task<IActionResult> Create(StudentCreateViewModel model)
         {
             try
             {
                 var Student = new IdentityUser
                 {
-                    UserName = studentProfile.Email, 
-                    Email = studentProfile.Email,
+                    UserName = model.Email, 
+                    Email = model.Email,
                     EmailConfirmed = true
                 };
-                var result = await _userManager.CreateAsync(Student, studentProfile.Password);
+                var result = await _userManager.CreateAsync(Student, model.Password);
 
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(Student, "Student");
-                    studentProfile.IdentityUserId = Student.Id;
+                    var studentProfile = new VgcCollege.Library.StudentProfile()
+                    {
+                        Name = model.Name,
+                        Email = model.Email,
+                        PhoneNumber = model.PhoneNumber,
+                        DOB = model.DOB,
+                        IdentityUserId = Student.Id,
+                        Address = model.Address,
+                        CoursesEnrolments = new List<CourseEnrolment>()
+
+                    };
+                    var selectedCourseIds = model.AvailableCourses
+                        .Where(x => x.IsSelected)
+                        .Select(x => x.CourseId)
+                        .ToList();
+                    
+                    foreach (var courseId in selectedCourseIds)
+                    {
+                        studentProfile.CoursesEnrolments.Add(new CourseEnrolment()
+                        {
+                            CourseId = courseId,
+                            EnrolDate = DateOnly.FromDateTime(DateTime.Now),
+                        });
+                    }
                     
                     if (ModelState.IsValid)
                     {
@@ -92,7 +129,7 @@ namespace VgcCollege.MVC.Controllers.Admin
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
                 }
-                return View(studentProfile);
+                return View(model);
             }
             catch (Exception e)
             {
@@ -108,13 +145,29 @@ namespace VgcCollege.MVC.Controllers.Admin
             {
                 return NotFound();
             }
-
+            var student = await _context.StudentProfiles
+                .Include(s => s.CoursesEnrolments)
+                .FirstOrDefaultAsync(s => s.Id == id);
+            if (student == null) return NotFound();
+            
+            var allCourses = await _context.Courses.ToListAsync();
             var studentProfile = await _context.StudentProfiles.FindAsync(id);
-            if (studentProfile == null)
+            var viewModel = new StudentEditViewModel
             {
-                return NotFound();
-            }
-            return View(studentProfile);
+                Id = student.Id,
+                Name = student.Name,
+                Email = student.Email,
+                PhoneNumber = student.PhoneNumber,
+                Address = student.Address,
+                DOB = student.DOB,
+                AvailableCourses = allCourses.Select(c => new CourseEnrollSelectionViewModel
+                {
+                    CourseId = c.Id,
+                    CourseName = c.Name,
+                    IsSelected = student.CoursesEnrolments.Any(e => e.CourseId == c.Id)
+                }).ToList()
+            };
+            return View(viewModel);
         }
 
         // POST: Student/Edit/5
@@ -122,9 +175,9 @@ namespace VgcCollege.MVC.Controllers.Admin
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,IdentityUserId,Name,Email,PhoneNumber,Address,DOB")] StudentProfile studentProfile)
+        public async Task<IActionResult> Edit(int id, StudentEditViewModel model)
         {
-            if (id != studentProfile.Id)
+            if (id != model.Id)
             {
                 return NotFound();
             }
@@ -133,23 +186,47 @@ namespace VgcCollege.MVC.Controllers.Admin
             {
                 try
                 {
-                    _context.Update(studentProfile);
+                    var studentToUpdate = await _context.StudentProfiles
+                        .Include(s => s.CoursesEnrolments)
+                        .FirstOrDefaultAsync(s => s.Id == id);
+                    
+                    if (studentToUpdate == null) return NotFound();
+                    
+                    studentToUpdate.Name = model.Name;
+                    studentToUpdate.PhoneNumber = model.PhoneNumber;
+                    studentToUpdate.Address = model.Address;
+                    studentToUpdate.DOB = model.DOB;
+                    _context.CourseEnrolments.RemoveRange(studentToUpdate.CoursesEnrolments);
+                    
+                    var selectedIds = model.AvailableCourses.Where(x => x.IsSelected).Select(x => x.CourseId);
+                    foreach (var courseId in selectedIds)
+                    {
+                        studentToUpdate.CoursesEnrolments.Add(new CourseEnrolment 
+                        { 
+                            CourseId = courseId,
+                            StudentProfileId = studentToUpdate.Id,
+                            EnrolDate = DateOnly.FromDateTime(DateTime.Now), 
+                        });
+                    }
+                    
+                    await _context.SaveChangesAsync();
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException e)
                 {
-                    if (!StudentProfileExists(studentProfile.Id))
+                    if (!StudentProfileExists(model.Id))
                     {
                         return NotFound();
                     }
                     else
                     {
+                        _logger.LogError("Unhandled exception occurred: {Message} by {User}", e.Message, User.Identity?.Name ?? "Anonymous");
                         throw;
                     }
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(studentProfile);
+            return View(model);
         }
 
         // GET: Student/Delete/5

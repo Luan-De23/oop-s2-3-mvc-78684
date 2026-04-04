@@ -1,0 +1,27 @@
+@model IEnumerable<VgcCollege.Library.Course>
+
+<h2>Manage My Courses</h2>
+
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Course Name</th>
+        <th>Start Date</th>
+        <th>Branch</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td>@item.Name</td>
+            <td>@item.StartDate.ToShortDateString()</td>
+            <td>@item.Branch?.Name</td>
+            <td>
+                <a asp-action="Attendance" asp-route-id="@item.Id" class="btn btn-primary">Take Attendance</a>
+                <a asp-action="AttendanceHistory" asp-route-id="@item.Id" class="btn btn-secondary">History</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

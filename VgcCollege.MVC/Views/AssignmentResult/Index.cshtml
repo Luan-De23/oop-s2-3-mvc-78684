@@ -1,4 +1,4 @@
-@model IEnumerable<VgcCollege.Library.Course>
+@model IEnumerable<VgcCollege.Library.AssignmentResult>
 
 @{
     ViewData["Title"] = "Index";
@@ -14,18 +14,20 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayNameFor(model => model.Score)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StartDate)
+                @Html.DisplayNameFor(model => model.FeedBack)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EndDate)
+                @Html.DisplayNameFor(model => model.Assigment)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Branch)
+                @Html.DisplayNameFor(model => model.StudentProfile)
             </th>
-            
+            <th>
+                @Html.DisplayNameFor(model => model.FacultyProfile)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -33,19 +35,20 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.DisplayFor(modelItem => item.Score)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
+                @Html.DisplayFor(modelItem => item.FeedBack)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
+                @Html.DisplayFor(modelItem => item.Assigment.Title)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Branch.Address)
+                @Html.DisplayFor(modelItem => item.StudentProfile.Address)
             </td>
-            
-            
+            <td>
+                @Html.DisplayFor(modelItem => item.FacultyProfile.Email)
+            </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |

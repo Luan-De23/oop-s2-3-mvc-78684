@@ -1,0 +1,28 @@
+@model List<int>
+
+<h2>History: @ViewBag.CourseName</h2>
+
+<ul class="list-group">
+    @foreach (var week in Model)
+    {
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            Week @week
+            <div>
+                @if (User.IsInRole("Admin") || User.IsInRole("Faculty"))
+                {
+                    <a asp-action="Attendance" asp-route-id="@ViewBag.CourseId" class="btn btn-sm btn-info">
+                        Edit
+                    </a>
+                }
+            
+                @if (User.IsInRole("Student"))
+                {
+                    <a asp-action="ViewStatus" asp-route-id="@ViewBag.CourseId" asp-route-weekNumber="@week" class="btn btn-sm btn-primary">
+                        View Status
+                    </a>
+                }
+                
+            </div>
+        </li>
+    }
+</ul>

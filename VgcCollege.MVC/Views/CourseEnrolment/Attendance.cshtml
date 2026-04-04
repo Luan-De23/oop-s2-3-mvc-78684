@@ -1,0 +1,35 @@
+@model VgcCollege.MVC.Models.AttendanceViewModel
+
+<h2>Attendance - @Model.CourseName</h2>
+<h4>Week: @Model.WeekDate</h4>
+
+<form asp-action="SubmitAttendance" method="post">
+    <input type="hidden" asp-for="CourseId" />
+    <input type="hidden" asp-for="WeekDate" />
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Student Name</th>
+            <th>Status (Present/Absent)</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for (int i = 0; i < Model.Students.Count; i++)
+        {
+            <tr>
+                <td>
+                    @Model.Students[i].StudentName
+                    <input type="hidden" asp-for="Students[i].EnrolmentId" />
+                </td>
+                <td>
+                    <select asp-for="Students[i].SelectedStatus" class="form-select" 
+                            asp-items="Html.GetEnumSelectList<VgcCollege.Library.AttendaceStatus>()">
+                    </select>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary">Save Attendance</button>
+</form>
