@@ -32,7 +32,6 @@ namespace VgcCollege.MVC.Controllers
                 .Include(a => a.StudentProfile)
                 .AsQueryable();
 
-            // Filtro: Professor só vê notas dos cursos onde leciona
             if (User.IsInRole("Faculty"))
             {
                 query = query.Where(r => r.Assigment.Course.FacultyProfiles.Any(f => f.Email == currentUserEmail));
@@ -54,7 +53,6 @@ namespace VgcCollege.MVC.Controllers
 
             if (assignmentResult == null) return NotFound();
 
-            // Segurança: Verificar se o professor tem acesso a este curso
             if (User.IsInRole("Faculty"))
             {
                 var isOwner = await _context.Courses.AnyAsync(c => c.Id == assignmentResult.Assigment.CourseId && 
@@ -70,7 +68,6 @@ namespace VgcCollege.MVC.Controllers
         {
             string currentUserEmail = User.Identity.Name;
 
-            // Filtra atividades apenas dos cursos do professor
             var assignmentsQuery = _context.Assignments.Include(a => a.Course).AsQueryable();
             if (User.IsInRole("Faculty"))
             {
@@ -88,14 +85,12 @@ namespace VgcCollege.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Score,FeedBack,AssigmentId,StudentProfileId")] AssignmentResult assignmentResult)
         {
-            // 1. Validar nota máxima baseada no Assignment selecionado
             var assignment = await _context.Assignments.FindAsync(assignmentResult.AssigmentId);
             if (assignment != null && assignmentResult.Score > assignment.MaxScore)
             {
-                ModelState.AddModelError("Score", $"A nota não pode ser superior ao máximo permitido ({assignment.MaxScore}).");
+                ModelState.AddModelError("Score", $"The score cannot be higher than ({assignment.MaxScore}).");
             }
 
-            // 2. Atribuir automaticamente o ID do Professor logado
             var faculty = await _context.FacultyProfiles.FirstOrDefaultAsync(f => f.Email == User.Identity.Name);
             if (faculty != null)
             {
@@ -125,7 +120,6 @@ namespace VgcCollege.MVC.Controllers
 
             if (assignmentResult == null) return NotFound();
 
-            // Segurança: Impedir edição de notas de outros cursos
             if (User.IsInRole("Faculty"))
             {
                 var isOwner = await _context.Courses.AnyAsync(c => c.Id == assignmentResult.Assigment.CourseId && 
@@ -145,11 +139,10 @@ namespace VgcCollege.MVC.Controllers
         {
             if (id != assignmentResult.Id) return NotFound();
 
-            // Validar nota máxima no Edit
             var assignment = await _context.Assignments.FindAsync(assignmentResult.AssigmentId);
             if (assignment != null && assignmentResult.Score > assignment.MaxScore)
             {
-                ModelState.AddModelError("Score", $"A nota não pode ser superior ao máximo permitido ({assignment.MaxScore}).");
+                ModelState.AddModelError("Score", $"the score cannot be higher than ({assignment.MaxScore}).");
             }
 
             if (ModelState.IsValid)
