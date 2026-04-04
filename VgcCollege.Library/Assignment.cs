@@ -12,7 +12,7 @@ public class Assignment
     public int FacultyProfileId { get; set; }
     public FacultyProfile? FacultyProfile { get; set; }
     
-    public int AssigmentResultId { get; set; }
+    public int? AssigmentResultId { get; set; }
     public AssignmentResult? AssigmentResult { get; set; }
     
     public int CourseId { get; set; }

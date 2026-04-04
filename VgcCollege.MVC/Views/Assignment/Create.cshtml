@@ -1,54 +1,44 @@
 @model VgcCollege.Library.Assignment
 
 @{
-    ViewData["Title"] = "Create";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Create Assignment";
 }
 
 <h1>Create</h1>
-
 <h4>Assignment</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="MaxScore" class="control-label"></label>
-                <input asp-for="MaxScore" class="form-control" />
+                <input asp-for="MaxScore" class="form-control" type="number" />
                 <span asp-validation-for="MaxScore" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="DueDate" class="control-label"></label>
-                <input asp-for="DueDate" class="form-control" />
+                <input asp-for="DueDate" class="form-control" type="date" />
                 <span asp-validation-for="DueDate" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="FacultyProfileId" class="control-label"></label>
-                <select asp-for="FacultyProfileId" class ="form-control" asp-items="ViewBag.FacultyProfileId"></select>
+            <div class="form-group mb-3">
+                <label asp-for="CourseId" class="control-label">Course</label>
+                <select asp-for="CourseId" class="form-control" asp-items="ViewBag.CourseId">
+                    <option value="">-- Select Course --</option>
+                </select>
+                <span asp-validation-for="CourseId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="AssigmentResultId" class="control-label"></label>
-                <select asp-for="AssigmentResultId" class ="form-control" asp-items="ViewBag.AssigmentResultId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="CourseId" class="control-label"></label>
-                <select asp-for="CourseId" class ="form-control" asp-items="ViewBag.CourseId"></select>
-            </div>
-            <div class="form-group">
+            <div class="form-group mt-3">
                 <input type="submit" value="Create" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Back</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

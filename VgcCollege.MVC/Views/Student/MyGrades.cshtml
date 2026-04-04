@@ -1,0 +1,17 @@
+@model IEnumerable<VgcCollege.Library.AssignmentResult>
+<h2>My Grades</h2>
+@foreach (var group in Model.GroupBy(r => r.Assigment.Course.Name))
+{
+    <h3>@group.Key</h3>
+    <table class="table">
+        <tr><th>Assignment</th><th>Score</th><th>Feedback</th></tr>
+        @foreach (var item in group)
+        {
+            <tr>
+                <td>@item.Assigment.Title</td>
+                <td>@item.Score / @item.Assigment.MaxScore</td>
+                <td>@item.FeedBack</td>
+            </tr>
+        }
+    </table>
+}

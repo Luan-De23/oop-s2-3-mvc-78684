@@ -13,7 +13,7 @@ using VgcCollege.MVC.Models;
 
 namespace VgcCollege.MVC.Controllers.Admin
 {
-    [Authorize(Roles = "Admin")]
+    
     public class StudentController : Controller
     {
         private readonly ILogger<StudentController> _logger;
@@ -28,12 +28,14 @@ namespace VgcCollege.MVC.Controllers.Admin
         }
 
         // GET: Student
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.StudentProfiles.ToListAsync());
         }
 
         // GET: Student/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -52,6 +54,7 @@ namespace VgcCollege.MVC.Controllers.Admin
         }
 
         // GET: Student/Create
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -75,6 +78,7 @@ namespace VgcCollege.MVC.Controllers.Admin
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(StudentCreateViewModel model)
         {
             try
@@ -139,6 +143,7 @@ namespace VgcCollege.MVC.Controllers.Admin
         }
 
         // GET: Student/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -175,6 +180,7 @@ namespace VgcCollege.MVC.Controllers.Admin
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, StudentEditViewModel model)
         {
             if (id != model.Id)
@@ -230,6 +236,7 @@ namespace VgcCollege.MVC.Controllers.Admin
         }
 
         // GET: Student/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -250,6 +257,7 @@ namespace VgcCollege.MVC.Controllers.Admin
         // POST: Student/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var studentProfile = await _context.StudentProfiles.FindAsync(id);
@@ -265,6 +273,22 @@ namespace VgcCollege.MVC.Controllers.Admin
         private bool StudentProfileExists(int id)
         {
             return _context.StudentProfiles.Any(e => e.Id == id);
+        }
+        
+        // Grades --Testing
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> MyGrades()
+        {
+            var currentUserEmail = User.Identity.Name;
+
+            var myResults = await _context.AssignmentResults
+                .Include(r => r.Assigment)
+                .ThenInclude(a => a.Course)
+                .Where(r => r.StudentProfile.Email == currentUserEmail)
+                .OrderBy(r => r.Assigment.Course.Name)
+                .ToListAsync();
+
+            return View(myResults);
         }
     }
 }

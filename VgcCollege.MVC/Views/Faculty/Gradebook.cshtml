@@ -1,0 +1,26 @@
+@model IEnumerable<VgcCollege.Library.StudentProfile>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>Student</th>
+        @foreach (var assig in (List<VgcCollege.Library.Assignment>)ViewBag.Assignments)
+        {
+            <th>@assig.Title (@assig.MaxScore)</th>
+        }
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var student in Model)
+    {
+        <tr>
+            <td>@student.Name</td>
+            @foreach (var assig in (List<VgcCollege.Library.Assignment>)ViewBag.Assignments)
+            {
+                var result = ((List<VgcCollege.Library.AssignmentResult>)ViewBag.Results)
+                    .FirstOrDefault(r => r.StudentProfileId == student.Id && r.AssigmentId == assig.Id);
+                <td>@(result?.Score.ToString() ?? "-")</td>
+            }
+        </tr>
+    }
+    </tbody>
+</table>

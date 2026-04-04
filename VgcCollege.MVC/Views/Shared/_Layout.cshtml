@@ -3,67 +3,81 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>@ViewData["Title"] - VgcCollege.MVC</title>
+    <title>@ViewData["Title"] - VGC College</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
-    <link rel="stylesheet" href="~/VgcCollege.MVC.styles.css" asp-append-version="true"/>
+    <style>
+        body { background-color: #f8f9fa; }
+        .navbar { box-shadow: 0 2px 4px rgba(0,0,0,.08); }
+        .nav-link { font-weight: 500; }
+        .dropdown-item i { margin-right: 8px; color: #6c757d; }
+    </style>
 </head>
 <body>
 <header>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
         <div class="container-fluid">
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">VgcCollege.MVC</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-mortarboard-fill me-2"></i>VGC College
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
                     </li>
 
                     @if (User.Identity.IsAuthenticated)
                     {
                         @if (User.IsInRole("Admin"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Faculty" asp-action="Index">Faculties</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    Management
+                                </a>
+                                @*Dropdowns for better visualization*@
+                                <ul class="dropdown-menu shadow">
+                                    <li><a class="dropdown-item" asp-controller="Faculty" asp-action="Index"><i class="bi bi-person-badge"></i> Faculties</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Student" asp-action="Index"><i class="bi bi-people"></i> Students</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" asp-controller="Course" asp-action="Index"><i class="bi bi-book"></i> Courses</a></li>
+                                    <li><a class="dropdown-item" asp-controller="CourseEnrolment" asp-action="Index"><i class="bi bi-journal-check"></i> Enrolments</a></li>
+                                </ul>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Student" asp-action="Index">Students</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Course" asp-action="Index">Courses</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="CourseEnrolment" asp-action="Index">Enrolments</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Assignment" asp-action="Index">Assignment</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="AssignmentResult" asp-action="Index">Assignment Results</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    Academic
+                                </a>
+                                <ul class="dropdown-menu shadow">
+                                    <li><a class="dropdown-item" asp-controller="Assignment" asp-action="Index"><i class="bi bi-file-earmark-text"></i> Assignments</a></li>
+                                    <li><a class="dropdown-item" asp-controller="AssignmentResult" asp-action="Index"><i class="bi bi-trophy"></i> Results</a></li>
+                                </ul>
                             </li>
                         }
 
                         @if (User.IsInRole("Faculty"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="CourseEnrolment" asp-action="Index">Manage Attendance</a>
+                                <a class="nav-link" asp-controller="CourseEnrolment" asp-action="Index">Attendance</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Assignment" asp-action="Index">Assignment</a>
+                                <a class="nav-link" asp-controller="Assignment" asp-action="Index">Assignments</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="AssignmentResult" asp-action="Index">Assignment Result</a>
+                                <a class="nav-link btn btn-outline-warning btn-sm ms-lg-2 text-dark" asp-controller="AssignmentResult" asp-action="Index">Enter Grades</a>
                             </li>
                         }
 
                         @if (User.IsInRole("Student"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="CourseEnrolment" asp-action="Index">My Courses</a>
+                                <a class="nav-link" asp-controller="CourseEnrolment" asp-action="Index">My Courses</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Student" asp-action="MyGrades">My Grades</a>
                             </li>
                         }
                     }
@@ -75,15 +89,18 @@
 </header>
 <div class="container">
     <main role="main" class="pb-3">
-        @RenderBody()
+        <div class="card shadow-sm border-0 p-4 bg-white rounded-3">
+            @RenderBody()
+        </div>
     </main>
 </div>
 
-<footer class="border-top footer text-muted">
-    <div class="container">
-        &copy; 2026 - VgcCollege.MVC - <a asp-area="" asp-controller="Home" asp-action="Index">Privacy</a>
+<footer class="border-top footer text-muted bg-white mt-5">
+    <div class="container py-3">
+        &copy; 2026 - <strong>VGC College</strong> - <a asp-area="" asp-controller="Home" asp-action="Index">Privacy</a>
     </div>
 </footer>
+
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>

@@ -21,29 +21,41 @@ namespace VgcCollege.MVC.Controllers
             _context = context;
         }
 
-        // GET: Assignment
+        // GET: Assignment 
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Assignments.Include(a => a.AssigmentResult).Include(a => a.Course).Include(a => a.FacultyProfile);
-            return View(await applicationDbContext.ToListAsync());
+            string currentUserEmail = User.Identity.Name;
+
+            var query = _context.Assignments
+                .Include(a => a.Course)
+                .Include(a => a.FacultyProfile)
+                .AsQueryable();
+
+            if (User.IsInRole("Faculty"))
+            {
+                query = query.Where(a => a.Course.FacultyProfiles.Any(f => f.Email == currentUserEmail));
+            }
+
+            return View(await query.ToListAsync());
         }
 
         // GET: Assignment/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var assignment = await _context.Assignments
-                .Include(a => a.AssigmentResult)
                 .Include(a => a.Course)
                 .Include(a => a.FacultyProfile)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (assignment == null)
+
+            if (assignment == null) return NotFound();
+
+            // Some protection
+            
+            if (User.IsInRole("Faculty") && !IsCourseOwner(assignment.CourseId))
             {
-                return NotFound();
+                return Forbid();
             }
 
             return View(assignment);
@@ -52,64 +64,76 @@ namespace VgcCollege.MVC.Controllers
         // GET: Assignment/Create
         public IActionResult Create()
         {
-            ViewData["AssigmentResultId"] = new SelectList(_context.AssignmentResults, "Id", "FeedBack");
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Name");
-            ViewData["FacultyProfileId"] = new SelectList(_context.FacultyProfiles, "Id", "Email");
+            string currentUserEmail = User.Identity.Name;
+            
+            var coursesQuery = _context.Courses.AsQueryable();
+            if (User.IsInRole("Faculty"))
+            {
+                coursesQuery = coursesQuery.Where(c => c.FacultyProfiles.Any(f => f.Email == currentUserEmail));
+            }
+
+            ViewData["CourseId"] = new SelectList(coursesQuery, "Id", "Name");
             return View();
         }
 
-        // POST: Assignment/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,MaxScore,DueDate,FacultyProfileId,AssigmentResultId,CourseId")] Assignment assignment)
+        public async Task<IActionResult> Create([Bind("Id,Title,MaxScore,DueDate,CourseId")] Assignment assignment)
         {
+            var faculty = await _context.FacultyProfiles.FirstOrDefaultAsync(f => f.Email == User.Identity.Name);
+            
+            if (faculty != null)
+            {
+                assignment.FacultyProfileId = faculty.Id;
+            }
+
             if (ModelState.IsValid)
             {
+                if (User.IsInRole("Faculty") && !IsCourseOwner(assignment.CourseId))
+                {
+                    return Forbid();
+                }
+
                 _context.Add(assignment);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AssigmentResultId"] = new SelectList(_context.AssignmentResults, "Id", "FeedBack", assignment.AssigmentResultId);
+            
             ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Name", assignment.CourseId);
-            ViewData["FacultyProfileId"] = new SelectList(_context.FacultyProfiles, "Id", "Email", assignment.FacultyProfileId);
             return View(assignment);
         }
 
         // GET: Assignment/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var assignment = await _context.Assignments.FindAsync(id);
-            if (assignment == null)
+            if (assignment == null) return NotFound();
+
+            if (User.IsInRole("Faculty") && !IsCourseOwner(assignment.CourseId))
             {
-                return NotFound();
+                return Forbid();
             }
-            ViewData["AssigmentResultId"] = new SelectList(_context.AssignmentResults, "Id", "FeedBack", assignment.AssigmentResultId);
+
             ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Name", assignment.CourseId);
-            ViewData["FacultyProfileId"] = new SelectList(_context.FacultyProfiles, "Id", "Email", assignment.FacultyProfileId);
             return View(assignment);
         }
 
         // POST: Assignment/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,MaxScore,DueDate,FacultyProfileId,AssigmentResultId,CourseId")] Assignment assignment)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,MaxScore,DueDate,CourseId,FacultyProfileId")] Assignment assignment)
         {
-            if (id != assignment.Id)
-            {
-                return NotFound();
-            }
+            if (id != assignment.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
+                if (User.IsInRole("Faculty") && !IsCourseOwner(assignment.CourseId))
+                {
+                    return Forbid();
+                }
+
                 try
                 {
                     _context.Update(assignment);
@@ -117,45 +141,33 @@ namespace VgcCollege.MVC.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AssignmentExists(assignment.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!AssignmentExists(assignment.Id)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AssigmentResultId"] = new SelectList(_context.AssignmentResults, "Id", "FeedBack", assignment.AssigmentResultId);
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Name", assignment.CourseId);
-            ViewData["FacultyProfileId"] = new SelectList(_context.FacultyProfiles, "Id", "Email", assignment.FacultyProfileId);
             return View(assignment);
         }
 
         // GET: Assignment/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var assignment = await _context.Assignments
-                .Include(a => a.AssigmentResult)
                 .Include(a => a.Course)
-                .Include(a => a.FacultyProfile)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (assignment == null)
+
+            if (assignment == null) return NotFound();
+
+            if (User.IsInRole("Faculty") && !IsCourseOwner(assignment.CourseId))
             {
-                return NotFound();
+                return Forbid();
             }
 
             return View(assignment);
         }
 
-        // POST: Assignment/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -164,10 +176,14 @@ namespace VgcCollege.MVC.Controllers
             if (assignment != null)
             {
                 _context.Assignments.Remove(assignment);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool IsCourseOwner(int courseId)
+        {
+            return _context.Courses.Any(c => c.Id == courseId && c.FacultyProfiles.Any(f => f.Email == User.Identity.Name));
         }
 
         private bool AssignmentExists(int id)

@@ -1,66 +1,41 @@
 @model IEnumerable<VgcCollege.Library.Assignment>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Assignments";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<div class="container">
+    <h1>Assignments</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Create New Assignment</a>
+    </p>
+
+    <table class="table table-striped border">
+        <thead class="table-light">
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MaxScore)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DueDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FacultyProfile)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AssigmentResult)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Course)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.Title)</th>
+            <th>@Html.DisplayNameFor(model => model.MaxScore)</th>
+            <th>@Html.DisplayNameFor(model => model.DueDate)</th>
+            <th>@Html.DisplayNameFor(model => model.Course)</th>
+            <th>Actions</th>
         </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MaxScore)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DueDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FacultyProfile.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AssigmentResult.FeedBack)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Course.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        @foreach (var item in Model) {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                <td>@Html.DisplayFor(modelItem => item.MaxScore)</td>
+                <td>@item.DueDate.ToShortDateString()</td>
+                <td>@Html.DisplayFor(modelItem => item.Course.Name)</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

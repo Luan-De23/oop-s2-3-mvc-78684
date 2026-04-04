@@ -11,42 +11,12 @@
     <h4>Assignment</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MaxScore)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MaxScore)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DueDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DueDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FacultyProfile)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FacultyProfile.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AssigmentResult)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AssigmentResult.FeedBack)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Course)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Course.Name)
-        </dd>
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Title)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Title)</dd>
+        <dt class="col-sm-2">Max Score</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.MaxScore)</dd>
+        <dt class="col-sm-2">Course</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Course.Name)</dd>
     </dl>
 </div>
 <div>

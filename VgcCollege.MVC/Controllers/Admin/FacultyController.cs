@@ -263,5 +263,41 @@ namespace VgcCollege.MVC.Controllers.Admin
         {
             return _context.FacultyProfiles.Any(e => e.Id == id);
         }
+        
+        // GradeBook -Testing
+        [Authorize(Roles = "Faculty,Admin")]
+        public async Task<IActionResult> Gradebook(int courseId)
+        {
+            var currentUserEmail = User.Identity.Name;
+
+            var course = await _context.Courses
+                .Include(c => c.FacultyProfiles)
+                .FirstOrDefaultAsync(c => c.Id == courseId);
+
+            if (course == null || (User.IsInRole("Faculty") && !course.FacultyProfiles.Any(f => f.Email == currentUserEmail)))
+            {
+                return Forbid();
+            }
+
+            var students = await _context.CourseEnrolments
+                .Include(e => e.StudentProfile)
+                .Where(e => e.CourseId == courseId)
+                .Select(e => e.StudentProfile)
+                .ToListAsync();
+
+            var assignments = await _context.Assignments
+                .Where(a => a.CourseId == courseId)
+                .ToListAsync();
+
+            var results = await _context.AssignmentResults
+                .Where(r => r.Assigment.CourseId == courseId)
+                .ToListAsync();
+
+            ViewBag.Assignments = assignments;
+            ViewBag.Results = results;
+            ViewBag.CourseName = course.Name;
+
+            return View(students);
+        }
     }
 }

@@ -12,36 +12,14 @@
     <h4>AssignmentResult</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Score)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Score)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FeedBack)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FeedBack)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Assigment)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Assigment.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StudentProfile)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StudentProfile.Address)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FacultyProfile)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FacultyProfile.Email)
-        </dd>
+        <dt class="col-sm-2">Student</dt>
+        <dd class="col-sm-10">@Model.StudentProfile?.Email</dd>
+
+        <dt class="col-sm-2">Assignment</dt>
+        <dd class="col-sm-10">@Model.Assigment?.Title</dd>
+
+        <dt class="col-sm-2">Score</dt>
+        <dd class="col-sm-10">@Model.Score</dd>
     </dl>
     
     <form asp-action="Delete">
