@@ -1,0 +1,48 @@
+@model IEnumerable<VgcCollege.Library.Exam>
+
+@{
+    ViewData["Title"] = "Exams Management";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-journal-richtext me-2"></i>Exams</h1>
+    <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Create New Exam</a>
+</div>
+
+<table class="table table-hover shadow-sm bg-white rounded">
+    <thead class="table-dark">
+    <tr>
+        <th>@Html.DisplayNameFor(model => model.Title)</th>
+        <th>@Html.DisplayNameFor(model => model.Course)</th>
+        <th>Date</th>
+        <th>Max Score</th>
+        <th class="text-center">Status</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td><strong>@item.Title</strong></td>
+            <td>@item.Course?.Name</td>
+            <td>@item.ExamDate.ToShortDateString()</td>
+            <td>@item.MaxScore</td>
+            <td class="text-center">
+                @if (item.ResultReleased) {
+                    <span class="badge bg-success"><i class="bi bi-unlock-fill"></i> Released</span>
+                } else {
+                    <span class="badge bg-warning text-dark"><i class="bi bi-lock-fill"></i> Hidden</span>
+                }
+            </td>
+            <td>
+                <div class="btn-group">
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">Details</a>
+                    <a asp-controller="ExamResult" asp-action="Create" asp-route-examId="@item.Id" class="btn btn-sm btn-outline-primary">Add Grades</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                </div>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

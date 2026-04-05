@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VgcCollege.MVC.Data;
 
@@ -10,9 +11,11 @@ using VgcCollege.MVC.Data;
 namespace VgcCollege.MVC.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260405141346_2.7")]
+    partial class _27
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.5");
@@ -419,9 +422,6 @@ namespace VgcCollege.MVC.Data.Migrations
                     b.Property<bool>("ResultReleased")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("StudentProfileId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -431,8 +431,6 @@ namespace VgcCollege.MVC.Data.Migrations
                     b.HasIndex("CourseId");
 
                     b.HasIndex("FacultyProfileId");
-
-                    b.HasIndex("StudentProfileId");
 
                     b.ToTable("Exams");
                 });
@@ -731,15 +729,9 @@ namespace VgcCollege.MVC.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VgcCollege.Library.StudentProfile", "StudentProfile")
-                        .WithMany()
-                        .HasForeignKey("StudentProfileId");
-
                     b.Navigation("Course");
 
                     b.Navigation("FacultyProfile");
-
-                    b.Navigation("StudentProfile");
                 });
 
             modelBuilder.Entity("VgcCollege.Library.ExamResult", b =>

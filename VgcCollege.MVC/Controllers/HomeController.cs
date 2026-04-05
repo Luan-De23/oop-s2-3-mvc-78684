@@ -78,6 +78,16 @@ namespace VgcCollege.MVC.Controllers
                         .Take(5)
                         .ToListAsync()
                 };
+                
+                var examResults = await _context.ExamResults
+                    .Include(r => r.Exam)
+                    .Where(r => r.StudentProfileId == student.Id)
+                    .Select(r => new {
+                        ExamTitle = r.Exam.Title,
+                        DisplayScore = r.Exam.ResultReleased ? r.Score.ToString() : "Pending"
+                    })
+                    .ToListAsync();
+                
                 return View("StudentDashboard", studentModel);
             }
 

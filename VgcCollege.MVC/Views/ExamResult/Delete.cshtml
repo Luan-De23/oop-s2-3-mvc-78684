@@ -1,0 +1,31 @@
+@model VgcCollege.Library.ExamResult
+
+@{
+    ViewData["Title"] = "Delete Grade";
+}
+
+<div class="container">
+    <h1 class="text-danger">Delete Grade</h1>
+    <h3 class="mb-4">Are you sure you want to remove this student's grade?</h3>
+    
+    <div class="card border-danger mb-4">
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">Student</dt>
+                <dd class="col-sm-9">@Model.StudentProfile?.Name</dd>
+                
+                <dt class="col-sm-3">Exam</dt>
+                <dd class="col-sm-9">@Model.Exam?.Title</dd>
+
+                <dt class="col-sm-3">Score</dt>
+                <dd class="col-sm-9 text-danger fw-bold">@Model.Score</dd>
+            </dl>
+        </div>
+    </div>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Confirm Delete</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

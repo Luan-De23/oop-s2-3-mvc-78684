@@ -1,0 +1,34 @@
+@model VgcCollege.Library.Exam
+
+@{
+    ViewData["Title"] = "Exam Details";
+}
+
+<div class="container">
+    <h1>Exam Details</h1>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h4 class="card-title text-primary">@Model.Title</h4>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-3 text-muted">Course</dt>
+                <dd class="col-sm-9 fw-bold">@Model.Course?.Name</dd>
+
+                <dt class="col-sm-3 text-muted">Exam Date</dt>
+                <dd class="col-sm-9">@Model.ExamDate.ToLongDateString()</dd>
+
+                <dt class="col-sm-3 text-muted">Maximum Score</dt>
+                <dd class="col-sm-9">@Model.MaxScore</dd>
+
+                <dt class="col-sm-3 text-muted">Status</dt>
+                <dd class="col-sm-9">
+                    @(Model.ResultReleased ? "Public - Students can see results" : "Private - Results hidden")
+                </dd>
+            </dl>
+        </div>
+        <div class="card-footer bg-light">
+            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Edit</a>
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+</div>

@@ -10,7 +10,7 @@ public class Exam
     
     
     // Fk's
-    public int StudentProfileId { get; set; }
+    public int? StudentProfileId { get; set; }
     public StudentProfile? StudentProfile { get; set; }
     
     public int FacultyProfileId { get; set; }

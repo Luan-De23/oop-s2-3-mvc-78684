@@ -8,26 +8,100 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <style>
-        body { background-color: #f8f9fa; }
-        .navbar { box-shadow: 0 2px 4px rgba(0,0,0,.08); }
-        .nav-link { font-weight: 500; }
-        .dropdown-item i { margin-right: 8px; color: #6c757d; }
+        :root {
+            --primary-color: #0d253f;
+            --accent-color: #01b4e4;
+        }
+
+        body { 
+            background-color: #f0f2f5; 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .navbar-custom {
+            background: linear-gradient(90deg, #0d253f 0%, #011d33 100%);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 0.8rem 1rem;
+        }
+
+        .navbar-brand {
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            color: #fff !important;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: rgba(255,255,255,0.85) !important;
+            transition: all 0.3s ease;
+            margin: 0 5px;
+        }
+
+        /* Dropdowns */
+        .dropdown-menu {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            padding: 10px;
+        }
+
+        .dropdown-item {
+            border-radius: 8px;
+            padding: 8px 15px;
+            transition: background 0.2s;
+        }
+
+        .dropdown-item i {
+            width: 25px;
+            color: #0d253f;
+        }
+
+        /* Role Badge */
+        .role-indicator {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+            color: #01b4e4;
+            border: 1px solid rgba(1, 180, 228, 0.3);
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        /* Main Content Container */
+        .main-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            margin-top: -20px; 
+            background: #fff;
+            min-height: 70vh;
+        }
+
+        .footer {
+            background: #fff;
+            padding: 2rem 0;
+            margin-top: 4rem;
+            border-top: 1px solid #dee2e6;
+        }
     </style>
 </head>
 <body>
 <header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
-        <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom mb-5">
+        <div class="container">
             <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">
-                <i class="bi bi-mortarboard-fill me-2"></i>VGC College
+                <i class="bi bi-mortarboard-fill text-info me-2"></i>VGC COLLEGE
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
+            
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
+                        <a class="nav-link" asp-controller="Home" asp-action="Index"><i class="bi bi-house-door me-1"></i>Home</a>
                     </li>
 
                     @if (User.Identity.IsAuthenticated)
@@ -35,69 +109,88 @@
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                    Management
+                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                    <i class="bi bi-sliders me-1"></i>Management
                                 </a>
-                                @*Dropdowns for better visualization*@
-                                <ul class="dropdown-menu shadow">
+                                <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" asp-controller="Faculty" asp-action="Index"><i class="bi bi-person-badge"></i> Faculties</a></li>
                                     <li><a class="dropdown-item" asp-controller="Student" asp-action="Index"><i class="bi bi-people"></i> Students</a></li>
                                     <li><a class="dropdown-item" asp-controller="Branch" asp-action="Index"><i class="bi bi-geo-alt"></i> Branches</a></li>
+                                    <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" asp-controller="Course" asp-action="Index"><i class="bi bi-book"></i> Courses</a></li>
                                     <li><a class="dropdown-item" asp-controller="CourseEnrolment" asp-action="Index"><i class="bi bi-journal-check"></i> Enrolments</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                    Academic
+                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                    <i class="bi bi-academic-cap me-1"></i>Academic
                                 </a>
-                                <ul class="dropdown-menu shadow">
+                                <ul class="dropdown-menu">
+                                    <li class="dropdown-header text-uppercase small fw-bold">Assignments</li>
                                     <li><a class="dropdown-item" asp-controller="Assignment" asp-action="Index"><i class="bi bi-file-earmark-text"></i> Assignments</a></li>
                                     <li><a class="dropdown-item" asp-controller="AssignmentResult" asp-action="Index"><i class="bi bi-trophy"></i> Results</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li class="dropdown-header text-uppercase small fw-bold">Exams</li>
+                                    <li><a class="dropdown-item" asp-controller="Exam" asp-action="Index"><i class="bi bi-journal-richtext"></i> Manage Exams</a></li>
+                                    <li><a class="dropdown-item" asp-controller="ExamResult" asp-action="Index"><i class="bi bi-award"></i> Exam Results</a></li>
                                 </ul>
                             </li>
                         }
 
                         @if (User.IsInRole("Faculty"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="CourseEnrolment" asp-action="Index">Attendance</a>
+                            <li class="nav-item"><a class="nav-link" asp-controller="CourseEnrolment" asp-action="Index">Attendance</a></li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Grading</a>
+                                <ul class="dropdown-menu shadow">
+                                    <li><a class="dropdown-item" asp-controller="AssignmentResult" asp-action="Index">Assignment Grades</a></li>
+                                    <li><a class="dropdown-item" asp-controller="ExamResult" asp-action="Index">Exam Grades</a></li>
+                                </ul>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Assignment" asp-action="Index">Assignments</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link btn btn-outline-warning btn-sm ms-lg-2 text-dark" asp-controller="AssignmentResult" asp-action="Index">Enter Grades</a>
+                                <a class="nav-link btn btn-info btn-sm ms-lg-3 text-dark fw-bold px-3" asp-controller="Exam" asp-action="Index">EXAMS HUB</a>
                             </li>
                         }
 
                         @if (User.IsInRole("Student"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="CourseEnrolment" asp-action="Index">My Courses</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Student" asp-action="MyGrades">My Grades</a>
-                            </li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="CourseEnrolment" asp-action="Index">My Courses</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Student" asp-action="MyGrades">Report Card</a></li>
                         }
                     }
                 </ul>
-                <partial name="_LoginPartial"/>
+                <div class="d-flex align-items-center">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        var role = User.IsInRole("Admin") ? "Admin" : User.IsInRole("Faculty") ? "Faculty" : "Student";
+                        <span class="role-indicator d-none d-xl-inline-block">@role</span>
+                    }
+                    <partial name="_LoginPartial"/>
+                </div>
             </div>
         </div>
     </nav>
 </header>
+
 <div class="container">
-    <main role="main" class="pb-3">
-        <div class="card shadow-sm border-0 p-4 bg-white rounded-3">
+    <main role="main" class="pb-5">
+        <div class="card main-card p-4 p-md-5">
             @RenderBody()
         </div>
     </main>
 </div>
 
-<footer class="border-top footer text-muted bg-white mt-5">
-    <div class="container py-3">
-        &copy; 2026 - <strong>VGC College</strong> - <a asp-area="" asp-controller="Home" asp-action="Index">Privacy</a>
+<footer class="footer text-muted bg-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6 text-center text-md-start">
+                &copy; 2026 - <span class="fw-bold text-dark">VGC College</span> 
+            </div>
+            <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
+                <a asp-controller="Home" asp-action="Index" class="text-decoration-none text-muted me-3">Privacy</a>
+                <a href="#" class="text-decoration-none text-muted">Support</a>
+            </div>
+        </div>
     </div>
 </footer>
 

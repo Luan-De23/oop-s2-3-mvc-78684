@@ -1,0 +1,49 @@
+@model VgcCollege.Library.ExamResult
+
+@{
+    ViewData["Title"] = "Edit Grade";
+}
+
+<div class="container">
+    <h1>Edit Grade</h1>
+    <h4>Student: @Model.StudentProfile?.Name | Exam: @Model.Exam?.Title</h4>
+    <hr />
+    
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="ExamId" />
+                <input type="hidden" asp-for="StudentProfileId" />
+                <input type="hidden" asp-for="FacultyProfileId" />
+
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="form-group mb-3">
+                            <label asp-for="Score" class="control-label fw-bold">Score</label>
+                            <input asp-for="Score" class="form-control" type="number" />
+                            <span asp-validation-for="Score" class="text-danger"></span>
+                            <small class="text-muted">Max score allowed: @Model.Exam?.MaxScore</small>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Grade" class="control-label fw-bold">Grade / Mention</label>
+                            <input asp-for="Grade" class="form-control" placeholder="Ex: A, B+, Excellent..." />
+                            <span asp-validation-for="Grade" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

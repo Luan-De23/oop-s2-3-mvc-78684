@@ -96,6 +96,7 @@ namespace VgcCollege.MVC.Models
     public class StudentDashboardViewModel {
         public List<CourseEnrolment> MyEnrolments { get; set; } = new();
         public List<AssignmentResult> RecentResults { get; set; } = new();
+        public List<ExamResult> RecentExams { get; set; } = new(); 
     }
     
 
