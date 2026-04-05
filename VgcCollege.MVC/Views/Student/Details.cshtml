@@ -1,55 +1,77 @@
 @model VgcCollege.Library.StudentProfile
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Student Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Details</h1>
+<div class="d-flex justify-content-between align-items-center">
+    <h1>Student Details</h1>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Edit Profile</a>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>
 
 <div>
-    <h4>StudentProfile</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdentityUserId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdentityUserId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PhoneNumber)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PhoneNumber)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Address)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Address)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DOB)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DOB)
-        </dd>
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Name)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Name)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Email)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Email)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.PhoneNumber)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.PhoneNumber)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Address)</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.Address)</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.DOB)</dt>
+        <dd class="col-sm-10">@Model.DOB.ToShortDateString()</dd>
     </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="mt-5">
+    <h4><i class="bi bi-book me-2"></i>Enrolled Courses</h4>
+    <hr />
+    @if (Model.CoursesEnrolments != null && Model.CoursesEnrolments.Any())
+    {
+        <table class="table table-striped border shadow-sm">
+            <thead class="table-light">
+                <tr>
+                    <th>Course Name</th>
+                    <th>Branch</th>
+                    <th>Enrolment Date</th>
+                    <th class="text-center">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var enrolment in Model.CoursesEnrolments)
+                {
+                    <tr>
+                        <td>
+                            <strong>@enrolment.Course?.Name</strong>
+                        </td>
+                        <td>
+                            @enrolment.Course?.Branch
+                        </td>
+                        <td>
+                            @enrolment.EnrolDate.ToShortDateString()
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-success">Active</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle me-2"></i> This student is not enrolled in any courses yet.
+        </div>
+    }
 </div>

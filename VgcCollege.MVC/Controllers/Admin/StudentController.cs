@@ -38,17 +38,14 @@ namespace VgcCollege.MVC.Controllers.Admin
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var studentProfile = await _context.StudentProfiles
+                .Include(s => s.CoursesEnrolments)         
+                .ThenInclude(e => e.Course)            
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (studentProfile == null)
-            {
-                return NotFound();
-            }
+
+            if (studentProfile == null) return NotFound();
 
             return View(studentProfile);
         }

@@ -1,0 +1,92 @@
+@model StudentDashboardViewModel
+
+@{
+    ViewData["Title"] = "Student Dashboard";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-mortarboard me-2"></i>Welcome, @User.Identity.Name!</h2>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-book me-2"></i>My Enrolments</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Course</th>
+                                    <th>Branch</th>
+                                    <th class="text-center">Attendance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.MyEnrolments)
+                                {
+                                    <tr>
+                                        <td><strong>@item.Course?.Name</strong></td>
+                                        <td>@item.Course?.Branch</td>
+                                        <td class="text-center">
+                                            @* Exemplo de visualização de progresso *@
+                                            <div class="progress" style="height: 20px;" title="Attendance: 85%">
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: 85%;" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">85%</div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-star me-2"></i>Recent Grades</h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        @if (!Model.RecentResults.Any())
+                        {
+                            <li class="list-group-item text-muted text-center py-4">No grades recorded yet.</li>
+                        }
+                        @foreach (var result in Model.RecentResults)
+                        {
+                            <li class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-0">@result.Assigment?.Title</h6>
+                                        <small class="text-muted">@result.Assigment?.Course?.Name</small>
+                                    </div>
+                                    
+                                    @* Lógica de liberação de resultados *@
+                                    <div class="text-end">
+                                        <span class="badge bg-primary fs-6">
+                                            @result.Score / @result.Assigment?.MaxScore
+                                        </span>
+                                    </div>
+                                </div>
+                                @if(!string.IsNullOrEmpty(result.FeedBack))
+                                {
+                                    <div class="mt-2 small text-secondary italic">
+                                        <i class="bi bi-chat-left-quote me-1"></i> "@result.FeedBack"
+                                    </div>
+                                }
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="card-footer bg-white text-center">
+                    <a asp-controller="Student" asp-action="MyGrades" class="btn btn-sm btn-outline-primary">View Full Report Card</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

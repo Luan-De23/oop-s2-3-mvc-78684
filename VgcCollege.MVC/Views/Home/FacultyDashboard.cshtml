@@ -1,0 +1,24 @@
+@model FacultyDashboardViewModel
+<div class="container mt-4">
+    <h2>Faculty Dashboard</h2>
+    <hr />
+    
+    <div class="alert alert-info">
+        You have <strong>@Model.PendingAssignmentsCount</strong> assignments waiting for grading.
+    </div>
+
+    <h4>My Assigned Courses</h4>
+    <div class="row">
+        @foreach (var course in Model.MyCourses) {
+            <div class="col-md-4 mb-3">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">@course.Name</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Branch: @course.Branch</div>
+                        <a asp-controller="AssignmentResult" asp-action="Create" class="btn btn-sm btn-primary mt-2">Add Grade</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

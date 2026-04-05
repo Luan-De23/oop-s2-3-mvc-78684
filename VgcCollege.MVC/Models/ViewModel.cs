@@ -81,6 +81,23 @@ namespace VgcCollege.MVC.Models
         public AttendaceStatus SelectedStatus { get; set; } 
     }
     
+    public class AdminDashboardViewModel {
+        public int TotalStudents { get; set; }
+        public int TotalFaculty { get; set; }
+        public int TotalCourses { get; set; }
+        public int TotalBranches { get; set; }
+    }
+
+    public class FacultyDashboardViewModel {
+        public List<Course> MyCourses { get; set; } = new();
+        public int PendingAssignmentsCount { get; set; }
+    }
+
+    public class StudentDashboardViewModel {
+        public List<CourseEnrolment> MyEnrolments { get; set; } = new();
+        public List<AssignmentResult> RecentResults { get; set; } = new();
+    }
+    
 
    
 }
